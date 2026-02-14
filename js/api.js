@@ -1,13 +1,11 @@
 // api.js — AllAnime GraphQL API (same source as ani-cli)
 
 const ALLANIME_API = 'https://api.allanime.day/api';
-const ALLANIME_REFR = 'https://allmanga.to';
+const CORS_PROXY = 'https://corsproxy.io/?';
 
 async function gqlFetch(query, variables) {
-  const url = `${ALLANIME_API}?variables=${encodeURIComponent(JSON.stringify(variables))}&query=${encodeURIComponent(query)}`;
-  const res = await fetch(url, {
-    headers: { Referer: ALLANIME_REFR }
-  });
+  const target = `${ALLANIME_API}?variables=${encodeURIComponent(JSON.stringify(variables))}&query=${encodeURIComponent(query)}`;
+  const res = await fetch(CORS_PROXY + encodeURIComponent(target));
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
