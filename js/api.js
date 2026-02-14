@@ -9,15 +9,11 @@ async function gqlFetch(query, variables) {
   return res.json();
 }
 
-// Decode obfuscated sourceUrls (-- prefix = encoded)
+// Decode obfuscated sourceUrls (-- prefix = hex bytes XOR 0x38)
 function decodeUrl(url) {
   if (!url.startsWith('--')) return url;
-  const encoded = url.slice(2);
-  // AllAnime uses a simple char substitution
-  return encoded.replace(/[a-zA-Z]/g, c => {
-    const base = c <= 'Z' ? 65 : 97;
-    return String.fromCharCode(((c.charCodeAt(0) - base + 13) % 26) + base);
-  });
+  const hex = url.slice(2);
+  return hex.match(/../g).map(h => String.fromCharCode(parseInt(h, 16) ^ 0x38)).join('');
 }
 
 async function search(query) {
