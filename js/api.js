@@ -71,12 +71,38 @@ async function getStreamingUrls(episodeId) {
 
   for (const src of sourceUrls) {
     if (!src.sourceUrl) continue;
-    const url = decodeUrl(src.sourceUrl);
-    if (!url.startsWith('http')) continue;
+    let decoded = decodeUrl(src.sourceUrl);
+
+    // Relative path → needs clock.json resolution
+    if (decoded.startsWith('/')) {
+      try {
+        const id = new URL('https://x.x' + decoded).searchParams.get('id');
+        if (!id) continue;
+        const res = await fetch(`${PROXY}/resolve?id=${encodeURIComponent(id)}`);
+        const json = await res.json();
+        const links = json.links || [];
+        for (const link of links) {
+          if (!link.link) continue;
+          const referer = link.headers?.Referer || 'https://megacloud.club/';
+          const origin = link.headers?.Origin || 'https://megacloud.club';
+          const proxyUrl = `${PROXY}/stream?url=${encodeURIComponent(link.link)}&referer=${encodeURIComponent(referer)}&origin=${encodeURIComponent(origin)}`;
+          sources.push({
+            url: proxyUrl,
+            quality: link.resolutionStr || src.sourceName || 'auto',
+            isM3U8: true
+          });
+        }
+      } catch (e) { /* skip */ }
+      continue;
+    }
+
+    if (!decoded.startsWith('http')) continue;
+
+    // Direct URL — proxy it too for headers
     sources.push({
-      url,
+      url: decoded,
       quality: src.sourceName || 'default',
-      isM3U8: url.includes('.m3u8') || url.includes('m3u8')
+      isM3U8: decoded.includes('.m3u8')
     });
   }
 
