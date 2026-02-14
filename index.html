@@ -56,7 +56,8 @@
     <!-- VIEW: PLAYER -->
     <div id="view-player" class="view" style="display:none">
       <div class="video-wrapper">
-        <video id="video-el" playsinline></video>
+        <video id="video-el" playsinline style="display:none"></video>
+        <iframe id="iframe-el" style="display:none;width:100%;height:100%;border:none;" allowfullscreen allow="autoplay; fullscreen; encrypted-media" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
         <div id="video-loading" class="video-loading">LOADING...</div>
       </div>
       <div class="controls">

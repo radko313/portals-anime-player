@@ -98,7 +98,16 @@ async function getStreamingUrls(episodeId) {
 
     if (!decoded.startsWith('http')) continue;
 
-    // Direct URL — proxy it too for headers
+    // iframe-type sources (ok.ru, mp4upload, filemoon, etc.)
+    if (src.type === 'iframe') {
+      sources.push({
+        url: decoded,
+        quality: src.sourceName || 'default',
+        isIframe: true
+      });
+      continue;
+    }
+
     sources.push({
       url: decoded,
       quality: src.sourceName || 'default',
@@ -106,5 +115,7 @@ async function getStreamingUrls(episodeId) {
     });
   }
 
+  // Prefer iframe sources first (more reliable), then video sources
+  sources.sort((a, b) => (b.isIframe ? 1 : 0) - (a.isIframe ? 1 : 0));
   return { sources };
 }

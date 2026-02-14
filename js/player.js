@@ -90,13 +90,29 @@ function initControls() {
 }
 
 function loadSource(src, resumeTime = 0) {
-  const video = document.getElementById('video-el');
+  const video   = document.getElementById('video-el');
+  const iframeEl = document.getElementById('iframe-el');
   document.getElementById('video-loading').classList.remove('hidden');
 
-  if (hlsInstance) {
-    hlsInstance.destroy();
-    hlsInstance = null;
+  if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+
+  // iframe source (ok.ru, mp4upload, etc.)
+  if (src.isIframe) {
+    video.style.display = 'none';
+    video.src = '';
+    iframeEl.style.display = 'block';
+    iframeEl.src = src.url;
+    iframeEl.onload = () => document.getElementById('video-loading').classList.add('hidden');
+    // hide controls since we can't control iframe playback
+    document.querySelector('.controls').style.display = 'none';
+    return;
   }
+
+  // video source
+  document.querySelector('.controls').style.display = '';
+  iframeEl.style.display = 'none';
+  iframeEl.src = '';
+  video.style.display = 'block';
 
   if (src.isM3U8 && typeof Hls !== 'undefined' && Hls.isSupported()) {
     hlsInstance = new Hls();
@@ -132,7 +148,7 @@ async function loadEpisode(episodeId, resumeTime = 0) {
     return;
   }
 
-  // Populate quality dropdown
+  // Populate quality dropdown (skip iframe sources from dropdown)
   const quality = document.getElementById('ctrl-quality');
   quality.innerHTML = '';
   sources.forEach(s => {
@@ -142,7 +158,9 @@ async function loadEpisode(episodeId, resumeTime = 0) {
     quality.appendChild(opt);
   });
 
-  const best = pickBestSource(sources);
+  // Pick first iframe source if available, else best video source
+  const iframeSrc = sources.find(s => s.isIframe);
+  const best = iframeSrc || pickBestSource(sources);
   quality.value = best.quality || 'default';
 
   loadSource(best, resumeTime);
