@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anime Player</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- HEADER -->
+    <div class="header">
+      <button id="btn-back" class="btn-icon" style="display:none">&#9664;</button>
+      <span class="header-title">ANIME PLAYER</span>
+      <button id="btn-close" class="btn-icon">&#10005;</button>
+    </div>
+
+    <!-- VIEW: SEARCH -->
+    <div id="view-search" class="view">
+      <div class="search-bar">
+        <input id="search-input" type="text" placeholder="SEARCH ANIME..." autocomplete="off" spellcheck="false" />
+        <button id="btn-search">GO</button>
+      </div>
+
+      <div id="continue-section" class="section" style="display:none">
+        <div class="section-title">&#9733; CONTINUE WATCHING</div>
+        <div id="continue-cards" class="continue-cards"></div>
+      </div>
+
+      <div id="results-section" class="section" style="display:none">
+        <div class="section-title">RESULTS</div>
+        <div id="results-list" class="results-list"></div>
+      </div>
+
+      <div id="search-empty" class="empty-state">
+        <div>SEARCH FOR AN ANIME</div>
+        <div class="empty-sub">TYPE ABOVE AND PRESS GO</div>
+      </div>
+
+      <div id="search-error" class="error-panel" style="display:none">
+        CONNECTION FAILED — CHECK YOUR INTERNET AND TRY AGAIN
+      </div>
+    </div>
+
+    <!-- VIEW: EPISODES -->
+    <div id="view-episodes" class="view" style="display:none">
+      <div id="anime-info-bar" class="anime-info-bar"></div>
+      <div class="section-title" style="padding: 8px 10px 4px">EPISODES</div>
+      <div id="episodes-list" class="episodes-list"></div>
+    </div>
+
+    <!-- VIEW: PLAYER -->
+    <div id="view-player" class="view" style="display:none">
+      <div class="video-wrapper">
+        <video id="video-el" playsinline></video>
+        <div id="video-loading" class="video-loading">LOADING...</div>
+      </div>
+      <div class="controls">
+        <button id="ctrl-play" class="ctrl-btn">&#9654;</button>
+        <span id="ctrl-time" class="ctrl-time">00:00 / 00:00</span>
+        <input id="ctrl-seek" type="range" class="seek-bar" value="0" min="0" max="100" step="0.1" />
+        <select id="ctrl-quality" class="quality-select"></select>
+        <button id="ctrl-fs" class="ctrl-btn">&#9633;</button>
+      </div>
+      <div id="player-meta" class="player-meta"></div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script>
+    // Minimal PortalsSdk shim for dev/standalone use
+    if (typeof PortalsSdk === 'undefined') {
+      window.PortalsSdk = {
+        closeIframe: () => {},
+        sendMessageToUnity: () => {},
+        setMessageListener: () => {}
+      };
+    }
+  </script>
+  <script src="js/api.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
