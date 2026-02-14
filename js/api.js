@@ -5,7 +5,8 @@ const ALLANIME_API = 'https://api.allanime.day/api';
 async function gqlFetch(query, variables) {
   const url = `${ALLANIME_API}?variables=${encodeURIComponent(JSON.stringify(variables))}&query=${encodeURIComponent(query)}`;
   const res = await fetch(url, {
-    headers: { 'Referer': 'https://allmanga.to' }
+    referrer: 'https://allmanga.to',
+    referrerPolicy: 'unsafe-url'
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
